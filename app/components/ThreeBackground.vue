@@ -1,10 +1,12 @@
 <template>
   <div class="fixed inset-0 -z-10 pointer-events-none">
     <TresCanvas clear-color="#0a0a0a">
-      <TresPerspectiveCamera :position="[0, 0, 7]" />
-      <Suspense>
-        <ThreeScene v-if="isMounted" />
-      </Suspense>
+      <template v-if="isMounted">
+        <TresPerspectiveCamera :position="[0, 0, 7]" />
+        <Suspense>
+          <ThreeScene />
+        </Suspense>
+      </template>
     </TresCanvas>
   </div>
 </template>

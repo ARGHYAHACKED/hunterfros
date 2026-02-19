@@ -101,33 +101,41 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 
   // Initialize GSAP timeline for mobile menu
-  if (mobileMenuRef.value) {
+  const menuEl = mobileMenuRef.value
+  if (menuEl) {
     menuTl = gsap.timeline({ paused: true })
 
-    menuTl.set(mobileMenuRef.value, { autoAlpha: 1 }) // This sets visibility to visible
+    menuTl.set(menuEl, { autoAlpha: 1 }) 
 
-    menuTl.to(mobileMenuRef.value, {
+    menuTl.to(menuEl, {
       y: 0,
       duration: 1.2,
       ease: 'expo.inOut'
     })
 
-    menuTl.to(mobileMenuRef.value, {
+    menuTl.to(menuEl, {
       pointerEvents: 'auto',
       duration: 0
     }, '<')
 
-    menuTl.fromTo('.mobile-link', 
-      { y: 100, opacity: 0, rotate: 5, pointerEvents: 'none' },
-      { y: 0, opacity: 1, rotate: 0, duration: 1, stagger: 0.1, ease: 'expo.out', pointerEvents: 'auto' },
-      '-=0.6'
-    )
+    // Using querySelectorAll to be safe
+    const links = menuEl.querySelectorAll('.mobile-link')
+    if (links.length > 0) {
+      menuTl.fromTo(links, 
+        { y: 100, opacity: 0, rotate: 5, pointerEvents: 'none' },
+        { y: 0, opacity: 1, rotate: 0, duration: 1, stagger: 0.1, ease: 'expo.out', pointerEvents: 'auto' },
+        '-=0.6'
+      )
+    }
 
-    menuTl.fromTo('.mobile-social',
-      { opacity: 0, y: 20, pointerEvents: 'none' },
-      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', pointerEvents: 'auto' },
-      '-=0.4'
-    )
+    const socials = menuEl.querySelectorAll('.mobile-social')
+    if (socials.length > 0) {
+      menuTl.fromTo(socials,
+        { opacity: 0, y: 20, pointerEvents: 'none' },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', pointerEvents: 'auto' },
+        '-=0.4'
+      )
+    }
   }
 })
 

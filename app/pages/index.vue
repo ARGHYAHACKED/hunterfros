@@ -370,15 +370,19 @@ onMounted(() => {
   if (typeof window === 'undefined') return
 
   // Trigger hero animation immediately
-  startHeroAnimation()
+  if (heroTitle.value) {
+    startHeroAnimation()
+  }
 
   // Spotlight Parallax
-  if (spotlightSection.value && spotlightImg.value) {
-    gsap.to(spotlightImg.value, {
+  const spotSec = spotlightSection.value
+  const spotImg = spotlightImg.value
+  if (spotSec && spotImg) {
+    gsap.to(spotImg, {
       scale: 1,
       ease: 'none',
       scrollTrigger: {
-        trigger: spotlightSection.value,
+        trigger: spotSec,
         start: 'top bottom',
         end: 'bottom top',
         scrub: true,
@@ -387,23 +391,28 @@ onMounted(() => {
   }
 
   // Text Fill Scroll Effect
-  if (narrativeText.value && textFillOverlay1.value && textFillOverlay2.value) {
+  const narrText = narrativeText.value
+  const overlay1 = textFillOverlay1.value
+  const overlay2 = textFillOverlay2.value
+  if (narrText && overlay1 && overlay2) {
     const fillTl = gsap.timeline({
       scrollTrigger: {
-        trigger: narrativeText.value,
+        trigger: narrText,
         start: 'top 70%',
         end: 'bottom 40%',
         scrub: 1,
       }
     })
 
-    fillTl.to(textFillOverlay1.value, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 })
-          .to(textFillOverlay2.value, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 }, '+=0.2')
+    fillTl.to(overlay1, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 })
+          .to(overlay2, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 }, '+=0.2')
   }
 
   // Horizontal Carousel (Infinite - Seamless Loop)
   const items = gsap.utils.toArray('.project-card')
-  if (items.length > 0 && horizontalTrigger.value && horizontalSection.value) {
+  const horizTrigger = horizontalTrigger.value
+  const horizSec = horizontalSection.value
+  if (items.length > 0 && horizTrigger && horizSec) {
     const loop = horizontalLoop(items, {
       paused: true,
       repeat: -1,
@@ -411,43 +420,45 @@ onMounted(() => {
       paddingRight: 32 // gap-8
     })
 
-    const scrollTween = ScrollTrigger.create({
-      trigger: horizontalSection.value,
-      start: "top top",
-      end: () => `+=${items.length * 400}`, // Dynamic length
-      pin: true,
-      scrub: 1,
-      onUpdate: (self) => {
-        // Map scroll progress to loop progress
-        if (loop) loop.progress(self.progress)
-      }
-    })
+    if (loop) {
+      const scrollTween = ScrollTrigger.create({
+        trigger: horizSec,
+        start: "top top",
+        end: () => `+=${items.length * 400}`, // Dynamic length
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          // Map scroll progress to loop progress
+          loop.progress(self.progress)
+        }
+      })
 
-    // Parallax logic for internal images remains
-    items.forEach((card) => {
-      const innerImg = card.querySelector('.card-parallax-img')
-      if (innerImg) {
-        gsap.to(innerImg, {
-          x: '20%',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: card,
-            containerAnimation: scrollTween, 
-            start: 'left right',
-            end: 'right left',
-            scrub: true,
-          }
-        })
-      }
-    })
+      // Parallax logic for internal images remains
+      items.forEach((card) => {
+        const innerImg = card.querySelector('.card-parallax-img')
+        if (innerImg) {
+          gsap.to(innerImg, {
+            x: '20%',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              containerAnimation: scrollTween, 
+              start: 'left right',
+              end: 'right left',
+              scrub: true,
+            }
+          })
+        }
+      })
+    }
   }
 
   // Atmospheric Section Background Transition
-  if (horizontalSection.value) {
-    gsap.to(horizontalSection.value, {
+  if (horizSec) {
+    gsap.to(horizSec, {
       backgroundColor: '#0a0a0a',
       scrollTrigger: {
-        trigger: horizontalSection.value,
+        trigger: horizSec,
         start: 'top bottom',
         end: 'top top',
         scrub: true,
