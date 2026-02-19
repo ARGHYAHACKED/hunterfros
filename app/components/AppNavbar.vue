@@ -71,8 +71,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import gsap from 'gsap'
+import { ref, onMounted, onUnmounted, inject } from 'vue'
+import { gsap } from 'gsap'
 
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
@@ -90,40 +90,54 @@ const links = [
 let menuTl = null
 
 onMounted(() => {
-  window.addEventListener('scroll', () => {
+  if (typeof window === 'undefined') return
+
+  const handleScroll = () => {
     scrolled.value = window.scrollY > 50
-  })
+  }
+  window.addEventListener('scroll', handleScroll)
 
   // Initialize GSAP timeline for mobile menu
-  menuTl = gsap.timeline({ paused: true })
+  if (mobileMenuRef.value) {
+    menuTl = gsap.timeline({ paused: true })
 
-  menuTl.set(mobileMenuRef.value, { autoAlpha: 1 }) // This sets visibility to visible
+    menuTl.set(mobileMenuRef.value, { autoAlpha: 1 }) // This sets visibility to visible
 
-  menuTl.to(mobileMenuRef.value, {
-    y: 0,
-    duration: 1.2,
-    ease: 'expo.inOut'
+    menuTl.to(mobileMenuRef.value, {
+      y: 0,
+      duration: 1.2,
+      ease: 'expo.inOut'
+    })
+
+    menuTl.to(mobileMenuRef.value, {
+      pointerEvents: 'auto',
+      duration: 0
+    }, '<')
+
+    menuTl.fromTo('.mobile-link', 
+      { y: 100, opacity: 0, rotate: 5, pointerEvents: 'none' },
+      { y: 0, opacity: 1, rotate: 0, duration: 1, stagger: 0.1, ease: 'expo.out', pointerEvents: 'auto' },
+      '-=0.6'
+    )
+
+    menuTl.fromTo('.mobile-social',
+      { opacity: 0, y: 20, pointerEvents: 'none' },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', pointerEvents: 'auto' },
+      '-=0.4'
+    )
+  }
+
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+    if (menuTl) {
+      menuTl.kill()
+    }
   })
-
-  menuTl.to(mobileMenuRef.value, {
-    pointerEvents: 'auto',
-    duration: 0
-  }, '<')
-
-  menuTl.fromTo('.mobile-link', 
-    { y: 100, opacity: 0, rotate: 5, pointerEvents: 'none' },
-    { y: 0, opacity: 1, rotate: 0, duration: 1, stagger: 0.1, ease: 'expo.out', pointerEvents: 'auto' },
-    '-=0.6'
-  )
-
-  menuTl.fromTo('.mobile-social',
-    { opacity: 0, y: 20, pointerEvents: 'none' },
-    { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', pointerEvents: 'auto' },
-    '-=0.4'
-  )
 })
 
 const toggleMenu = () => {
+  if (!menuTl) return
+  
   mobileMenuOpen.value = !mobileMenuOpen.value
   const lenis = getLenis()
   

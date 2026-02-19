@@ -53,7 +53,7 @@ const orbPositions = [
 ]
 
 onBeforeRender(({ delta, elapsed }) => {
-  if (knotRef.value) {
+  if (knotRef.value && knotRef.value.rotation && knotRef.value.position && knotRef.value.scale) {
     // Continuous rotation
     knotRef.value.rotation.y += delta * 0.15
     knotRef.value.rotation.x += delta * 0.08

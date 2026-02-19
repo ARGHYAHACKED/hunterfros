@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-// ThreeScene is auto-imported by Nuxt
+import ThreeScene from './ThreeScene.vue'
 </script>
 
 <style scoped>
