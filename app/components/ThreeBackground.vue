@@ -43,12 +43,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRenderLoop } from '@tresjs/core'
+import { useLoop } from '@tresjs/core'
 import { TorusKnot, Sphere } from '@tresjs/cientos'
 import { useWindowScroll } from '@vueuse/core'
 
 const knotRef = ref()
-const { onLoop } = useRenderLoop()
+const { onBeforeRender } = useLoop()
 const { y } = useWindowScroll()
 
 // Fixed positions to avoid hydration mismatch
@@ -60,7 +60,7 @@ const orbPositions = [
   [6, -1, -3]
 ]
 
-onLoop(({ delta, elapsed }) => {
+onBeforeRender(({ delta, elapsed }) => {
   if (knotRef.value) {
     // Continuous rotation
     knotRef.value.rotation.y += delta * 0.15
@@ -73,7 +73,10 @@ onLoop(({ delta, elapsed }) => {
     
     // Subtle breathing effect
     const pulse = Math.sin(elapsed * 2) * 0.1
-    knotRef.value.material.opacity = 0.3 + pulse
+    // Accessing material through knotRef.value.material for TresJS v5
+    if (knotRef.value.material) {
+      knotRef.value.material.opacity = 0.3 + pulse
+    }
   }
 })
 </script>
