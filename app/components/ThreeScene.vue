@@ -34,13 +34,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useLoop } from '@tresjs/core'
 import { TorusKnot, Sphere } from '@tresjs/cientos'
 import { useWindowScroll } from '@vueuse/core'
 
 const knotRef = ref()
-const { onBeforeRender } = useLoop()
 const { y } = useWindowScroll()
 
 // Fixed positions to avoid hydration mismatch
@@ -52,23 +51,28 @@ const orbPositions = [
   [6, -1, -3]
 ]
 
-onBeforeRender(({ delta, elapsed }) => {
-  if (knotRef.value && knotRef.value.rotation && knotRef.value.position && knotRef.value.scale) {
-    // Continuous rotation
-    knotRef.value.rotation.y += delta * 0.15
-    knotRef.value.rotation.x += delta * 0.08
-    
-    // React to scroll - more aggressive movement for better visibility
-    const scrollFactor = y.value * 0.001
-    knotRef.value.position.y = -scrollFactor * 2
-    knotRef.value.scale.set(1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5)
-    
-    // Subtle breathing effect
-    const pulse = Math.sin(elapsed * 2) * 0.1
-    // Accessing material through knotRef.value.material for TresJS v5
-    if (knotRef.value.material) {
-      knotRef.value.material.opacity = 0.3 + pulse
+onMounted(() => {
+  // Move context-dependent hooks here to ensure they only run on client
+  const { onBeforeRender } = useLoop()
+
+  onBeforeRender(({ delta, elapsed }) => {
+    if (knotRef.value && knotRef.value.rotation && knotRef.value.position && knotRef.value.scale) {
+      // Continuous rotation
+      knotRef.value.rotation.y += delta * 0.15
+      knotRef.value.rotation.x += delta * 0.08
+      
+      // React to scroll - more aggressive movement for better visibility
+      const scrollFactor = y.value * 0.001
+      knotRef.value.position.y = -scrollFactor * 2
+      knotRef.value.scale.set(1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5)
+      
+      // Subtle breathing effect
+      const pulse = Math.sin(elapsed * 2) * 0.1
+      // Accessing material through knotRef.value.material for TresJS v5
+      if (knotRef.value.material) {
+        knotRef.value.material.opacity = 0.3 + pulse
+      }
     }
-  }
+  })
 })
 </script>
