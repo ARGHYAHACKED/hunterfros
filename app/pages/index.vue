@@ -300,8 +300,6 @@ import { onMounted, ref, inject, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
-
 const isSiteLoaded = inject('isSiteLoaded')
 
 const heroTitle = ref()
@@ -368,6 +366,7 @@ const startHeroAnimation = () => {
 
 onMounted(() => {
   if (typeof window === 'undefined') return
+  gsap.registerPlugin(ScrollTrigger)
 
   // Trigger hero animation immediately
   if (heroTitle.value) {
@@ -489,7 +488,7 @@ onMounted(() => {
 function horizontalLoop(items, config) {
   items = gsap.utils.toArray(items)
   config = config || {}
-  let tl = gsap.timeline({repeat: config.repeat, paused: config.paused, defaults: {ease: "none"}, onReverseComplete: () => tl.totalTime(tl.rawTime() + tl.duration() * 100)}),
+  let tl = gsap.timeline({repeat: config.repeat, paused: config.paused, defaults: {ease: "none"}, onReverseComplete: function() { this.totalTime(this.rawTime() + this.duration() * 100); }}),
       length = items.length,
       startX = items[0].offsetLeft,
       times = [],

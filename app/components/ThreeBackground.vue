@@ -24,6 +24,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { TresCanvas } from '@tresjs/core'
+import { TresPerspectiveCamera, TresAmbientLight, TresDirectionalLight } from '@tresjs/core'
 // Explicit import for stability in production builds
 import ThreeScene from './ThreeScene.vue'
 
