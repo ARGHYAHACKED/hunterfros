@@ -87,14 +87,15 @@ const links = [
   { name: 'Contact', path: '/contact' },
 ]
 
-let menuTl = null
+const handleScroll = () => {
+  if (typeof window !== 'undefined') {
+    scrolled.value = window.scrollY > 50
+  }
+}
 
 onMounted(() => {
   if (typeof window === 'undefined') return
 
-  const handleScroll = () => {
-    scrolled.value = window.scrollY > 50
-  }
   window.addEventListener('scroll', handleScroll)
 
   // Initialize GSAP timeline for mobile menu
@@ -126,13 +127,15 @@ onMounted(() => {
       '-=0.4'
     )
   }
+})
 
-  onUnmounted(() => {
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
     window.removeEventListener('scroll', handleScroll)
-    if (menuTl) {
-      menuTl.kill()
-    }
-  })
+  }
+  if (menuTl) {
+    menuTl.kill()
+  }
 })
 
 const toggleMenu = () => {
