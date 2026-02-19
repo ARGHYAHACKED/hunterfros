@@ -364,131 +364,151 @@ const startHeroAnimation = () => {
     .fromTo(heroButtons.value, { opacity: 0, y: 30 }, { opacity: 1, y: 0 }, '-=1.4')
 }
 
+const ctx = ref()
+
 onMounted(() => {
   if (typeof window === 'undefined') return
-  gsap.registerPlugin(ScrollTrigger)
 
-  // Trigger hero animation immediately
-  if (heroTitle.value) {
-    startHeroAnimation()
-  }
+  ctx.value = gsap.context(() => {
+    // Trigger hero animation immediately
+    if (heroTitle.value) {
+      startHeroAnimation()
+    }
 
-  // Spotlight Parallax
-  const spotSec = spotlightSection.value
-  const spotImg = spotlightImg.value
-  if (spotSec && spotImg) {
-    gsap.to(spotImg, {
-      scale: 1,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: spotSec,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true,
-      }
-    })
-  }
-
-  // Text Fill Scroll Effect
-  const narrText = narrativeText.value
-  const overlay1 = textFillOverlay1.value
-  const overlay2 = textFillOverlay2.value
-  if (narrText && overlay1 && overlay2) {
-    const fillTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: narrText,
-        start: 'top 70%',
-        end: 'bottom 40%',
-        scrub: 1,
-      }
-    })
-
-    fillTl.to(overlay1, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 })
-          .to(overlay2, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 }, '+=0.2')
-  }
-
-  // Horizontal Carousel (Infinite - Seamless Loop)
-  const items = gsap.utils.toArray('.project-card')
-  const horizTrigger = horizontalTrigger.value
-  const horizSec = horizontalSection.value
-  if (items.length > 0 && horizTrigger && horizSec) {
-    const loop = horizontalLoop(items, {
-      paused: true,
-      repeat: -1,
-      speed: 1,
-      paddingRight: 32 // gap-8
-    })
-
-    if (loop) {
-      const scrollTween = ScrollTrigger.create({
-        trigger: horizSec,
-        start: "top top",
-        end: () => `+=${items.length * 400}`, // Dynamic length
-        pin: true,
-        scrub: 1,
-        onUpdate: (self) => {
-          // Map scroll progress to loop progress
-          loop.progress(self.progress)
-        }
-      })
-
-      // Parallax logic for internal images remains
-      items.forEach((card) => {
-        const innerImg = card.querySelector('.card-parallax-img')
-        if (innerImg) {
-          gsap.to(innerImg, {
-            x: '20%',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: scrollTween, 
-              start: 'left right',
-              end: 'right left',
-              scrub: true,
-            }
-          })
+    // Spotlight Parallax
+    const spotSec = spotlightSection.value
+    const spotImg = spotlightImg.value
+    if (spotSec && spotImg) {
+      gsap.to(spotImg, {
+        scale: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: spotSec,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
         }
       })
     }
-  }
 
-  // Atmospheric Section Background Transition
-  if (horizSec) {
-    gsap.to(horizSec, {
-      backgroundColor: '#0a0a0a',
-      scrollTrigger: {
-        trigger: horizSec,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: true,
-      }
-    })
-  }
-
-  // Service Reveals
-  const services = gsap.utils.toArray('.service-item-ref')
-  if (services.length > 0) {
-    services.forEach((group, i) => {
-      gsap.from(group, {
+    // Text Fill Scroll Effect
+    const narrText = narrativeText.value
+    const overlay1 = textFillOverlay1.value
+    const overlay2 = textFillOverlay2.value
+    if (narrText && overlay1 && overlay2) {
+      const fillTl = gsap.timeline({
         scrollTrigger: {
-          trigger: group,
-          start: 'top 90%',
-        },
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        ease: 'power3.out',
-        delay: i * 0.1,
+          trigger: narrText,
+          start: 'top 70%',
+          end: 'bottom 40%',
+          scrub: 1,
+        }
       })
-    })
+
+      fillTl.to(overlay1, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 })
+            .to(overlay2, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1 }, '+=0.2')
+    }
+
+    // Horizontal Carousel (Infinite - Seamless Loop)
+    const items = gsap.utils.toArray('.project-card')
+    const horizTrigger = horizontalTrigger.value
+    const horizSec = horizontalSection.value
+    if (items.length > 0 && horizTrigger && horizSec) {
+      const loop = horizontalLoop(items, {
+        paused: true,
+        repeat: -1,
+        speed: 1,
+        paddingRight: 32 // gap-8
+      })
+
+      if (loop) {
+        const scrollTween = ScrollTrigger.create({
+          trigger: horizSec,
+          start: "top top",
+          end: () => `+=${items.length * 400}`, // Dynamic length
+          pin: true,
+          scrub: 1,
+          onUpdate: (self) => {
+            // Map scroll progress to loop progress
+            loop.progress(self.progress)
+          }
+        })
+
+        // Parallax logic for internal images remains
+        items.forEach((card) => {
+          if (!card) return
+          const innerImg = card.querySelector('.card-parallax-img')
+          if (innerImg) {
+            gsap.to(innerImg, {
+              x: '20%',
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: scrollTween, 
+                start: 'left right',
+                end: 'right left',
+                scrub: true,
+              }
+            })
+          }
+        })
+      }
+    }
+
+    // Atmospheric Section Background Transition
+    if (horizSec) {
+      gsap.to(horizSec, {
+        backgroundColor: '#0a0a0a',
+        scrollTrigger: {
+          trigger: horizSec,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: true,
+        }
+      })
+    }
+
+    // Service Reveals
+    const services = gsap.utils.toArray('.service-item-ref')
+    if (services.length > 0) {
+      services.forEach((group, i) => {
+        if (!group) return
+        gsap.from(group, {
+          scrollTrigger: {
+            trigger: group,
+            start: 'top 90%',
+          },
+          opacity: 0,
+          y: 30,
+          duration: 1,
+          ease: 'power3.out',
+          delay: i * 0.1,
+        })
+      })
+    }
+  })
+})
+
+onUnmounted(() => {
+  if (ctx.value) {
+    ctx.value.revert()
   }
 })
 
 // GSAP Infinite Horizontal Loop Helper
 function horizontalLoop(items, config) {
-  items = gsap.utils.toArray(items)
+  items = gsap.utils.toArray(items).filter(item => !!item)
+  if (items.length === 0) return null
+  
   config = config || {}
-  let tl = gsap.timeline({repeat: config.repeat, paused: config.paused, defaults: {ease: "none"}, onReverseComplete: function() { this.totalTime(this.rawTime() + this.duration() * 100); }}),
+  let tl = gsap.timeline({
+    repeat: config.repeat, 
+    paused: config.paused, 
+    defaults: {ease: "none"}, 
+    onReverseComplete: function() { 
+      this.totalTime(this.rawTime() + this.duration() * 100); 
+    }
+  }),
       length = items.length,
       startX = items[0].offsetLeft,
       times = [],
@@ -538,7 +558,7 @@ function horizontalLoop(items, config) {
   tl.times = times;
   tl.progress(1, true).progress(0, true); 
   if (config.reversed) {
-    tl.vars.onReverseComplete();
+    tl.vars.onReverseComplete.call(tl);
     tl.reverse();
   }
   return tl;

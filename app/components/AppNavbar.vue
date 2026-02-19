@@ -95,14 +95,17 @@ const handleScroll = () => {
   }
 }
 
+const ctx = ref()
+
 onMounted(() => {
   if (typeof window === 'undefined') return
-
   window.addEventListener('scroll', handleScroll)
 
-  // Initialize GSAP timeline for mobile menu
-  const menuEl = mobileMenuRef.value
-  if (menuEl) {
+  ctx.value = gsap.context(() => {
+    // Mobile Menu Timeline
+    const menuEl = mobileMenuRef.value
+    if (!menuEl) return
+
     menuTl = gsap.timeline({ paused: true })
 
     menuTl.set(menuEl, { autoAlpha: 1 }) 
@@ -118,7 +121,6 @@ onMounted(() => {
       duration: 0
     }, '<')
 
-    // Using querySelectorAll to be safe
     const links = menuEl.querySelectorAll('.mobile-link')
     if (links.length > 0) {
       menuTl.fromTo(links, 
@@ -136,15 +138,15 @@ onMounted(() => {
         '-=0.4'
       )
     }
-  }
+  })
 })
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('scroll', handleScroll)
   }
-  if (menuTl) {
-    menuTl.kill()
+  if (ctx.value) {
+    ctx.value.revert()
   }
 })
 

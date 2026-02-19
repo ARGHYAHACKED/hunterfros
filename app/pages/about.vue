@@ -52,28 +52,35 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
+const ctx = ref()
 
 onMounted(() => {
   if (typeof window === 'undefined') return
 
-  const container = document.querySelector('.container')
-  if (container) {
-    gsap.from('.container > *', {
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.2,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: container,
-        start: 'top 80%',
-      }
-    })
+  ctx.value = gsap.context(() => {
+    const container = document.querySelector('.container')
+    if (container) {
+      gsap.from('.container > *', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top 80%',
+        }
+      })
+    }
+  })
+})
+
+onUnmounted(() => {
+  if (ctx.value) {
+    ctx.value.revert()
   }
 })
 
