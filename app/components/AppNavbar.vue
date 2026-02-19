@@ -87,6 +87,8 @@ const links = [
   { name: 'Contact', path: '/contact' },
 ]
 
+let menuTl = null
+
 const handleScroll = () => {
   if (typeof window !== 'undefined') {
     scrolled.value = window.scrollY > 50

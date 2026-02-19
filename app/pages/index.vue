@@ -367,6 +367,8 @@ const startHeroAnimation = () => {
 }
 
 onMounted(() => {
+  if (typeof window === 'undefined') return
+
   // Trigger hero animation immediately
   startHeroAnimation()
 
@@ -385,7 +387,7 @@ onMounted(() => {
   }
 
   // Text Fill Scroll Effect
-  if (textFillOverlay1.value && textFillOverlay2.value) {
+  if (narrativeText.value && textFillOverlay1.value && textFillOverlay2.value) {
     const fillTl = gsap.timeline({
       scrollTrigger: {
         trigger: narrativeText.value,
@@ -401,7 +403,7 @@ onMounted(() => {
 
   // Horizontal Carousel (Infinite - Seamless Loop)
   const items = gsap.utils.toArray('.project-card')
-  if (items.length > 0 && horizontalTrigger.value) {
+  if (items.length > 0 && horizontalTrigger.value && horizontalSection.value) {
     const loop = horizontalLoop(items, {
       paused: true,
       repeat: -1,
@@ -417,7 +419,7 @@ onMounted(() => {
       scrub: 1,
       onUpdate: (self) => {
         // Map scroll progress to loop progress
-        loop.progress(self.progress)
+        if (loop) loop.progress(self.progress)
       }
     })
 
@@ -441,30 +443,35 @@ onMounted(() => {
   }
 
   // Atmospheric Section Background Transition
-  gsap.to(horizontalSection.value, {
-    backgroundColor: '#0a0a0a',
-    scrollTrigger: {
-      trigger: horizontalSection.value,
-      start: 'top bottom',
-      end: 'top top',
-      scrub: true,
-    }
-  })
+  if (horizontalSection.value) {
+    gsap.to(horizontalSection.value, {
+      backgroundColor: '#0a0a0a',
+      scrollTrigger: {
+        trigger: horizontalSection.value,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: true,
+      }
+    })
+  }
 
   // Service Reveals
-  gsap.utils.toArray('.service-item-ref').forEach((group, i) => {
-    gsap.from(group, {
-      scrollTrigger: {
-        trigger: group,
-        start: 'top 90%',
-      },
-      opacity: 0,
-      y: 30,
-      duration: 1,
-      ease: 'power3.out',
-      delay: i * 0.1,
+  const services = gsap.utils.toArray('.service-item-ref')
+  if (services.length > 0) {
+    services.forEach((group, i) => {
+      gsap.from(group, {
+        scrollTrigger: {
+          trigger: group,
+          start: 'top 90%',
+        },
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out',
+        delay: i * 0.1,
+      })
     })
-  })
+  }
 })
 
 // GSAP Infinite Horizontal Loop Helper

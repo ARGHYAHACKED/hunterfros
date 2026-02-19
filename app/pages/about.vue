@@ -59,17 +59,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 onMounted(() => {
-  gsap.from('.container > *', {
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    stagger: 0.2,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.container',
-      start: 'top 80%',
-    }
-  })
+  if (typeof window === 'undefined') return
+
+  const container = document.querySelector('.container')
+  if (container) {
+    gsap.from('.container > *', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top 80%',
+      }
+    })
+  }
 })
 
 const values = [
