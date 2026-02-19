@@ -35,7 +35,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRenderLoop } from '@tresjs/core'
+import { useLoop } from '@tresjs/core'
 import { TorusKnot, Sphere } from '@tresjs/cientos'
 import { useWindowScroll } from '@vueuse/core'
 
