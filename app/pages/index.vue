@@ -444,7 +444,7 @@ onMounted(() => {
               ease: 'none',
               scrollTrigger: {
                 trigger: card,
-                containerAnimation: scrollTween, 
+                containerAnimation: loop, 
                 start: 'left right',
                 end: 'right left',
                 scrub: true,

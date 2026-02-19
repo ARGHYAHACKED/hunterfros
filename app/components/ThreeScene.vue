@@ -35,6 +35,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRenderLoop } from '@tresjs/core'
 import { TorusKnot, Sphere } from '@tresjs/cientos'
 import { useWindowScroll } from '@vueuse/core'
 
@@ -50,39 +51,24 @@ const orbPositions = [
   [6, -1, -3]
 ]
 
-let rafId = null
-let lastTime = 0
+const { onLoop } = useRenderLoop()
 
-const animate = (time) => {
-  const delta = (time - lastTime) / 1000
-  lastTime = time
-
-  if (knotRef.value && knotRef.value.rotation && knotRef.value.position && knotRef.value.scale) {
+onLoop(({ delta, elapsed }) => {
+  if (knotRef.value) {
     // Continuous rotation
     knotRef.value.rotation.y += delta * 0.15
     knotRef.value.rotation.x += delta * 0.08
     
-    // React to scroll - more aggressive movement for better visibility
+    // React to scroll
     const scrollFactor = y.value * 0.001
     knotRef.value.position.y = -scrollFactor * 2
     knotRef.value.scale.set(1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5, 1 + scrollFactor * 0.5)
     
     // Subtle breathing effect
-    const pulse = Math.sin(time * 0.002) * 0.1
+    const pulse = Math.sin(elapsed * 2) * 0.1
     if (knotRef.value.material) {
       knotRef.value.material.opacity = 0.3 + pulse
     }
   }
-
-  rafId = requestAnimationFrame(animate)
-}
-
-onMounted(() => {
-  lastTime = performance.now()
-  rafId = requestAnimationFrame(animate)
-})
-
-onUnmounted(() => {
-  if (rafId) cancelAnimationFrame(rafId)
 })
 </script>
