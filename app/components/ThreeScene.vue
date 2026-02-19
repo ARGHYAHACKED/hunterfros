@@ -51,9 +51,9 @@ const orbPositions = [
   [6, -1, -3]
 ]
 
-const { onLoop } = useRenderLoop()
+const { onBeforeRender } = useLoop()
 
-onLoop(({ delta, elapsed }) => {
+onBeforeRender(({ delta, elapsed }) => {
   if (knotRef.value) {
     // Continuous rotation
     knotRef.value.rotation.y += delta * 0.15
