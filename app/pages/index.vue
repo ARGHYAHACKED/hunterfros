@@ -136,7 +136,7 @@
       <div class="container mx-auto px-6 relative">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <!-- Left Content - Fixed when scrolling section -->
-          <div class="lg:col-span-4 sticky top-40 z-20 bg-black/80 backdrop-blur-md p-6 rounded-3xl border border-white/5">
+          <div class="lg:col-span-4 z-20 bg-black/80 backdrop-blur-md p-6 rounded-3xl border border-white/5">
             <span class="text-xs uppercase tracking-[0.4em] text-accent mb-6 font-bold block">Showcase</span>
             <h3 class="text-6xl md:text-7xl font-bold tracking-tighter leading-none mb-10 uppercase">Selected <br /> Works.</h3>
             <p class="text-white/40 text-lg font-light leading-relaxed mb-10">Curated projects where strategy meets high-resolution reality.</p>
@@ -422,17 +422,8 @@ onMounted(() => {
       })
 
       if (loop) {
-        const scrollTween = ScrollTrigger.create({
-          trigger: horizSec,
-          start: "top top",
-          end: () => `+=${items.length * 400}`, // Dynamic length
-          pin: true,
-          scrub: 1,
-          onUpdate: (self) => {
-            // Map scroll progress to loop progress
-            loop.progress(self.progress)
-          }
-        })
+        // Auto-play the loop
+        loop.play()
 
         // Parallax logic for internal images remains
         items.forEach((card) => {
@@ -444,7 +435,6 @@ onMounted(() => {
               ease: 'none',
               scrollTrigger: {
                 trigger: card,
-                containerAnimation: loop, 
                 start: 'left right',
                 end: 'right left',
                 scrub: true,

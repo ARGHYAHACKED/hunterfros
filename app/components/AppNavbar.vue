@@ -1,50 +1,53 @@
 <template>
-  <nav 
-    class="fixed top-0 left-0 w-full z-50 transition-all duration-700 ease-expo"
-    :class="{ 'py-6 bg-background/90 backdrop-blur-xl border-b border-white/5': scrolled, 'py-10 bg-transparent': !scrolled }"
-  >
-    <div class="container mx-auto px-6 flex justify-between items-center">
-      <NuxtLink to="/" class="text-2xl font-bold tracking-tighter group flex items-center gap-2 relative z-50">
-        <span class="w-2 h-2 bg-accent rounded-full group-hover:scale-[3] transition-transform duration-500"></span>
-        HUNTER<span class="text-accent underline decoration-accent/30 underline-offset-4">FOSS</span>
-      </NuxtLink>
-
-      <!-- Desktop Menu -->
-      <div class="hidden md:flex space-x-12 items-center">
-        <NuxtLink 
-          v-for="link in links" 
-          :key="link.path" 
-          :to="link.path"
-          class="text-[10px] uppercase tracking-[0.3em] font-bold hover:text-accent transition-colors relative group overflow-hidden"
-          active-class="text-accent"
-        >
-          <span class="block transition-transform duration-500 group-hover:-translate-y-full">{{ link.name }}</span>
-          <span class="absolute top-full left-0 block transition-transform duration-500 group-hover:-translate-y-full text-white">{{ link.name }}</span>
+  <div class="relative">
+    <nav 
+      class="fixed top-0 left-0 w-full z-[60] transition-all duration-700 ease-expo"
+      :class="{ 'py-6 bg-background/90 backdrop-blur-xl border-b border-white/5': scrolled, 'py-10 bg-transparent': !scrolled }"
+    >
+      <div class="container mx-auto px-6 flex justify-between items-center">
+        <NuxtLink to="/" class="text-2xl font-bold tracking-tighter group flex items-center gap-2 relative z-[70]">
+          <span class="w-2 h-2 bg-accent rounded-full group-hover:scale-[3] transition-transform duration-500"></span>
+          HUNTER<span class="text-accent underline decoration-accent/30 underline-offset-4">FOSS</span>
         </NuxtLink>
-        
-        <button class="relative px-8 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-full overflow-hidden group">
-          <span class="relative z-10 group-hover:text-white transition-colors duration-500">Start a Project</span>
-          <div class="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-expo"></div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-12 items-center">
+          <NuxtLink 
+            v-for="link in links" 
+            :key="link.path" 
+            :to="link.path"
+            class="text-[10px] uppercase tracking-[0.3em] font-bold hover:text-accent transition-colors relative group overflow-hidden"
+            active-class="text-accent"
+          >
+            <span class="block transition-transform duration-500 group-hover:-translate-y-full">{{ link.name }}</span>
+            <span class="absolute top-full left-0 block transition-transform duration-500 group-hover:-translate-y-full text-white">{{ link.name }}</span>
+          </NuxtLink>
+          
+          <button class="relative px-8 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-full overflow-hidden group">
+            <span class="relative z-10 group-hover:text-white transition-colors duration-500">Start a Project</span>
+            <div class="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-expo"></div>
+          </button>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button @click="toggleMenu" class="md:hidden z-[70] flex items-center gap-3 group relative overflow-hidden h-10 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+          <span class="text-[10px] uppercase tracking-widest font-bold text-white/70 group-hover:text-white transition-colors">
+            {{ mobileMenuOpen ? 'Close' : 'Menu' }}
+          </span>
+          <div class="w-6 flex flex-col items-end gap-1.5">
+            <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-6 rotate-45 translate-y-2' : 'w-6'"></div>
+            <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-0 opacity-0' : 'w-3'"></div>
+            <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-6 -rotate-45 -translate-y-2' : 'w-4'"></div>
+          </div>
         </button>
       </div>
+    </nav>
 
-      <!-- Mobile Toggle -->
-      <button @click="toggleMenu" class="md:hidden z-50 flex items-center gap-3 group relative overflow-hidden h-10 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
-        <span class="text-[10px] uppercase tracking-widest font-bold text-white/70 group-hover:text-white transition-colors">
-          {{ mobileMenuOpen ? 'Close' : 'Menu' }}
-        </span>
-        <div class="w-6 flex flex-col items-end gap-1.5">
-          <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-6 rotate-45 translate-y-2' : 'w-6'"></div>
-          <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-0 opacity-0' : 'w-3'"></div>
-          <div class="h-0.5 bg-white transition-all duration-500 ease-expo" :class="mobileMenuOpen ? 'w-6 -rotate-45 -translate-y-2' : 'w-4'"></div>
-        </div>
-      </button>
-    </div>
-
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Menu Overlay - MOVED OUTSIDE NAV -->
     <div 
       ref="mobileMenuRef"
-      class="fixed inset-0 bg-background flex flex-col justify-center items-center z-40 px-6 translate-y-full invisible pointer-events-none"
+      class="fixed inset-0 bg-background flex flex-col justify-center items-center z-[50] px-6 translate-y-full invisible pointer-events-none"
+      style="height: 100vh; height: 100dvh;"
     >
       <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
       
@@ -67,7 +70,7 @@
         <a href="#" class="hover:text-white transition-colors">Twitter</a>
       </div>
     </div>
-  </nav>
+  </div>
 </template>
 
 <script setup>
